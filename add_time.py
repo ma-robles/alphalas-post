@@ -7,7 +7,7 @@ import matplotlib.ticker as ticker
 
 
 myfiles = [] #list of image filenames
-origin = input('Introduce ruta de origen.\nPor ejemplo: '
+origin = input('Introduce ruta de la carpeta de origen.\nPor ejemplo: '
     'C:/Users/Invitado/Documentos/log_22nov17_105900\n ')
 root=origin.split("/")[-1]
 root=root.split("_")[0]
@@ -32,25 +32,24 @@ for i,name in enumerate(filenames):
     tname=name.split("_")[-1]
     filename=tname.split(".")[0]
     # Cambiar a formato XXhYYmZZs
-    hour = filename[:2] + 'h' + filename[2:4] + 'm' + filename[4:] + 's'
+    hour = filename[:2] + ':' + filename[2:4] + ':' + filename[4:]
     hours.append(hour)
 
-print(hours)
-print(filenames)
+#print(hours)
+#print(filenames)
 # graficar NO2_425-490.SlCol(NO2) y NO2_425-490.SlErr(NO2)
+# eliminar negativos por nan
 
 with open(output, 'w') as outfile:
     for i,line in enumerate(open(ruta)) :
         if i>1:
-            # Usamos line[:-2] para quitarle lo ultimos caracteres
-            # a 'line', que son: '\n'. Esto significa 'nuevo renglon'
-            # y si no se quita agrega una line en blanco entre cada
-            # fila.
+            #add time to data ! erase here?
             print(hours[i-2],line[:-2],sep="\t", file=outfile)
 
 hms, no2, e_no2 = [], [], []
 with open(output, 'r') as f:
     for line in f:
+        #read no2_val
         no2_val = float(line.split('\t')[3]) / 1e17
         if no2_val > 0:
             hms.append(line.split('\t')[0])
