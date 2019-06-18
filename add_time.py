@@ -10,6 +10,7 @@ from matplotlib.dates import DateFormatter
 import solarPos as solar
 
 sol=solar.solarPos(19.4, -99.149999, -6)
+srfc_file='contaminantes_2019.CSV'
 origin=sys.argv[1]
 col_var=2
 col_err=3
@@ -74,8 +75,11 @@ with open(output, 'r') as f:
         no2_val = float(line.split('\t')[1])
         no2=np.append(no2,no2_val)
         err=np.append(err,float(line.split('\t')[2]))
-
-fig, ax = plt.subplots(2)
+from plot_srf import get_srfc_data
+day_fmt='%d/%m/%Y' 
+day_txt=dt.datetime.strftime(hms[0], day_fmt)
+srfc_data=get_srfc_data(srfc_file, day_txt )
+fig, ax = plt.subplots(3)
 ax[0].plot(hms,no2)
 no2_max=np.max(no2)
 ax[0].plot(hms,s_pos*no2_max)
@@ -97,13 +101,14 @@ ax[1].errorbar(
         linestyle='None',
         #lw=.7,
         )
+ax[2].plot(srfc_data[0],srfc_data[1])
 for a in ax:
     a.label_outer()
 lims=list(plt.axis())
 #lims[2]=0
 #plt.axis(lims)
 #plt.xticks(rotation=45)
-ax[1].xaxis.set_major_formatter(plot_fmt)
+ax[2].xaxis.set_major_formatter(plot_fmt)
 #plt.ylabel(head.split('\t')[1])
-fig.suptitle(head.split('\t')[1])
+fig.suptitle(head.split('\t')[1]+'-'+day_txt)
 plt.show()
